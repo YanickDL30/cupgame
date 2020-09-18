@@ -61,7 +61,7 @@ void guess()
         
         sprintf(scr,"%d",score);
         vram_adr(NTADR_A(13,20)); 
-        vram_write(scr,1);
+        vram_write(scr,2);
         vram_adr(NTADR_A(6,20)); 	
         vram_write("SCORE:", 6);
         
@@ -83,7 +83,7 @@ void guess()
       
         sprintf(scr,"%d",score);
         vram_adr(NTADR_A(13,20)); 
-        vram_write(scr,1);
+        vram_write(scr,2);
         vram_adr(NTADR_A(6,20)); 	
         vram_write("SCORE:", 6);
       ppu_on_all();
@@ -109,7 +109,7 @@ void guess()
         
         sprintf(scr,"%d",score);
         vram_adr(NTADR_A(13,20)); 
-        vram_write(scr,1);
+        vram_write(scr,2);
         vram_adr(NTADR_A(6,20)); 	
         vram_write("SCORE:", 6);
         ppu_on_all();
@@ -129,7 +129,7 @@ void guess()
        
         sprintf(scr,"%d",score);
         vram_adr(NTADR_A(13,20)); 
-        vram_write(scr,1);
+        vram_write(scr,2);
         vram_adr(NTADR_A(6,20)); 	
         vram_write("SCORE:", 6);
        ppu_on_all();
@@ -167,14 +167,14 @@ void guess()
         vram_write("LOSE", 4);
         
         vram_adr(NTADR_A(19,19)); 
-        vram_write(str,1);
+        vram_write(str,2);
         vram_adr(NTADR_A(6,19)); 	
         vram_write("Winning cup:", 12);
         
         
         sprintf(scr,"%d",score);
         vram_adr(NTADR_A(13,20)); 
-        vram_write(scr,1);
+        vram_write(scr,2);
         vram_adr(NTADR_A(6,20)); 	
         vram_write("SCORE:", 6);
         ppu_on_all();
