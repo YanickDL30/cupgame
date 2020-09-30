@@ -60,16 +60,15 @@ void title_screen()
   vram_adr(NTADR_A(6,22));	
   vram_write("Press start to begin", 20);
   
-ppu_on_all();
+  ppu_on_all();
 
  while(1)
   {
-   
-    if(pad_trigger(0)&PAD_START) break; 
-   
-     seed = (rand() % 100);
+    seed = (rand() % 100);
+    if(pad_trigger(0)&PAD_START) break;    
   }
 }
+
 void display_cups()
 {
   int i;
@@ -199,8 +198,7 @@ void guess()
         vram_write(str,1);
         vram_adr(NTADR_A(6,19)); 	
         vram_write("Winning cup:", 12);
-      
-      
+         
         sprintf(scr,"%d",score);
         vram_adr(NTADR_A(13,20)); 
         vram_write(scr,2);
