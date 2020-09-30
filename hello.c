@@ -52,6 +52,7 @@ void setup_graphics()
 
 void title_screen() 
 {
+  int seed;
 
   vram_adr(NTADR_A(12,2));	
   vram_write("Welcome", 7);
@@ -62,11 +63,94 @@ void title_screen()
 ppu_on_all();
 
  while(1)
-  {   
+  {
+   
     if(pad_trigger(0)&PAD_START) break; 
+   
+     seed = (rand() % 100);
+  }
+}
+void display_cups()
+{
+  int i;
+  char oam_id;
+  setup_graphics();
+  actor_x[0]=40;
+  actor_y[0]=180;
+  actor_dx[0]=2;
+  
+  actor_x[1]=100;
+  actor_y[1]=180;
+
+  actor_x[2]=160;
+  actor_y[2]=180;
+  
+  for(i=0;i<NUM_ACTORS;i++)
+  {
+   oam_id = oam_meta_spr(actor_x[i], actor_y[i], oam_id, metasprite);
   }
 }
 
+void shuffle()
+{
+   char oam_id;
+  int i;
+  int j;
+  setup_graphics();
+ 
+  actor_x[0]=40;
+  actor_y[0]=180;
+  actor_dx[0]=2;
+  
+  actor_x[1]=100;
+  actor_y[1]=180;
+
+  actor_x[2]=160;
+  actor_y[2]=180;
+
+  for(i=0;i<NUM_ACTORS;i++)
+  {
+   oam_id = oam_meta_spr(actor_x[i], actor_y[i], oam_id, metasprite);
+  }
+
+  //shuffle right
+    for(j=0;j<1000;j++)
+    {
+      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite);
+      actor_x[0] += actor_dx[0];
+    }
+    //shuffle left
+    for(j=0;j<1000;j++)
+    {
+      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite);
+      actor_x[0] -= actor_dx[0];
+    }
+    //shuffle right again
+    for(j=0;j<1000;j++)
+    {
+      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite);
+      actor_x[0] += actor_dx[0];
+    }
+    //shuffle left again
+    for(j=0;j<1000;j++)
+    {
+      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite);
+      actor_x[0] -= actor_dx[0];
+    }
+    
+    oam_clear();
+  
+    actor_x[0]=40;
+    actor_y[0]=180;
+    actor_x[1]=100;
+    actor_y[1]=180;
+    actor_x[2]=160;
+    actor_y[2]=180;
+    for(i=0;i<NUM_ACTORS;i++)
+    {
+     oam_id = oam_meta_spr(actor_x[i], actor_y[i], oam_id, metasprite);
+    } 
+}
 void guess()
 {
   int num = (rand() % 3) +1;
@@ -75,11 +159,13 @@ void guess()
   char scr[]="";
   char str[] ="";
   sprintf(str, "%d", num); 
+  display_cups();
   
   while(1)
   {
     if(pad_trigger(0)&PAD_A)
     {
+      shuffle();
       if(num==1)
       {
         ppu_off();
@@ -128,6 +214,7 @@ void guess()
     
     if(pad_trigger(0)&PAD_B)
     {
+      shuffle();
       if(num==2)
       {
         ppu_off();
@@ -173,6 +260,7 @@ void guess()
     
     if(pad_trigger(0)&PAD_SELECT)
     {
+      shuffle();
       if(num==3)
       {
         ppu_off();
@@ -252,10 +340,7 @@ void game()
 }
 
 void main(void) {
-  char oam_id;
-  int i;
-  int j;
-  
+
   // set palette colors
   pal_col(0,0x05);	// set screen to red
   pal_col(1,0x01);	// fuchsia
@@ -263,65 +348,11 @@ void main(void) {
   pal_col(3,0x29);	// white
   
   title_screen();
-  setup_graphics();
- 
-  actor_x[0]=40;
-  actor_y[0]=180;
-  actor_dx[0]=2;
-  
-  actor_x[1]=100;
-  actor_y[1]=180;
-
-  actor_x[2]=160;
-  actor_y[2]=180;
-
-  for(i=0;i<NUM_ACTORS;i++)
-  {
-   oam_id = oam_meta_spr(actor_x[i], actor_y[i], oam_id, metasprite);
-  }
 
   while (1) 
   {   
-    game();    
-      
-    //shuffle right
-    for(j=0;j<1000;j++)
-    {
-      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite);
-      actor_x[0] += actor_dx[0];
-    }
-    //shuffle left
-    for(j=0;j<1000;j++)
-    {
-      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite);
-      actor_x[0] -= actor_dx[0];
-    }
-    //shuffle right again
-    for(j=0;j<1000;j++)
-    {
-      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite);
-      actor_x[0] += actor_dx[0];
-    }
-    //shuffle left again
-    for(j=0;j<1000;j++)
-    {
-      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite);
-      actor_x[0] -= actor_dx[0];
-    }
-    
-    oam_clear();
-  
-    actor_x[0]=40;
-    actor_y[0]=180;
-    actor_x[1]=100;
-    actor_y[1]=180;
-    actor_x[2]=160;
-    actor_y[2]=180;
-    for(i=0;i<NUM_ACTORS;i++)
-    {
-     oam_id = oam_meta_spr(actor_x[i], actor_y[i], oam_id, metasprite);
-    } 
-    
+     game(); 
+           
   }   
 }
 
