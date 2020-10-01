@@ -100,7 +100,7 @@ void shuffle()
   int j;
   
   //shuffle right
-    for(j=0;j<40;j++)
+    for(j=0;j<60;j++)
     {
       oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite);
       oam_id = oam_meta_spr(actor_x[1], actor_y[1], oam_id, metasprite);
@@ -112,34 +112,22 @@ void shuffle()
       ppu_wait_frame();
       oam_clear();
     }
-    //shuffle left
-    for(j=0;j<40;j++)
-    {
-      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite);
-      oam_id = oam_meta_spr(actor_x[1], actor_y[1], oam_id, metasprite);
-      actor_x[1] += 10;
-      oam_id = oam_meta_spr(actor_x[2], actor_y[2], oam_id, metasprite);
-     // actor_x[2] -= 10;
-      oam_id = oam_meta_spr(actor_x[3], actor_y[3], oam_id, metasprite);
-      actor_x[3] -= 10;
-      ppu_wait_frame();
-      oam_clear();
-    }
+
     //shuffle right again
-    for(j=0;j<800;j++)
+    for(j=0;j<600;j++)
     {
       oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite);
       oam_id = oam_meta_spr(actor_x[1], actor_y[1], oam_id, metasprite);
       actor_x[1] += actor_dx[1];
 
+      
     }
-    //shuffle left again
-    for(j=0;j<800;j++)
+    for(j=0;j<600;j++)
     {
       oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite);
       oam_id = oam_meta_spr(actor_x[1], actor_y[1], oam_id, metasprite);
-      actor_x[1] += actor_dx[1];
-
+      actor_x[1] -= actor_dx[1];
+      
     }
   
 }
