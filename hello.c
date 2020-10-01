@@ -133,7 +133,6 @@ void shuffle()
       ppu_wait_frame();
       oam_clear();
     }
-    
   } 
 }
 
@@ -191,6 +190,10 @@ void guess()
     if(pad_trigger(0)&PAD_UP && (actor_y[0] >80 && actor_y[0] <= 110))
     {
       oam_clear();
+      if(cup>1)
+      {
+        cup--;
+      }
       actor_y[0]-=15;
         
       oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite3);
