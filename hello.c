@@ -6,6 +6,7 @@
 #define TILE 0xc4 //cup
 #define TILE2 0xc8 //ball
 #define TILE3 0x1f//arrow
+#define TILE4 0x00//empty
 #define ATTR 0
 #define NUM_ACTORS 4
 
@@ -27,7 +28,10 @@
         8,      8,      TILE2+3,   ATTR, 
         128};
   const unsigned char metasprite3[]={
-        0,      0,      TILE3,   ATTR, 
+        0,      0,      TILE3,   ATTR,
+        //0,      0,      TILE4,   ATTR,
+       // 0,      0,      TILE4,   ATTR,
+       // 0,      0,      TILE4,   ATTR,
         128};
   const char PALETTE[32] = { 
   0x05,			// screen color
@@ -103,7 +107,7 @@ void shuffle()
   int j;
   int i;
   
-  for(i=0;i<3;i++)
+  for(i=0;i<4;i++)
   {
   for(j=0;j<12;j++)
     {
@@ -125,7 +129,7 @@ void shuffle()
       oam_id = oam_meta_spr(actor_x[3], actor_y[3], oam_id, metasprite);
       actor_x[3] += 4;
       ppu_wait_frame();
-      oam_clear();
+      //oam_clear();
     }
     
   } 
@@ -138,7 +142,15 @@ void display_ball(int x)
   setup_graphics();
  
   oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite3);
-  oam_id = oam_meta_spr(actor_x[x], actor_y[x], oam_id, metasprite2);
+  for(i=1;i<4;i++)
+  {
+    if(i==x)
+    {
+      continue;   
+    }
+    oam_id = oam_meta_spr(actor_x[i], actor_y[i], oam_id, metasprite);
+    oam_id = oam_meta_spr(actor_x[x], actor_y[x], oam_id, metasprite2);
+  }
   
   for(i=0;i<75;i++)
   {
