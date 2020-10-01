@@ -74,15 +74,19 @@ void display_cups()
   int i;
   char oam_id;
   setup_graphics();
-  actor_x[0]=40;
-  actor_y[0]=180;
-  actor_dx[0]=2;
+ 
+  actor_x[0]=20;
+  actor_y[0]=80;
   
-  actor_x[1]=100;
+  actor_x[1]=40;
   actor_y[1]=180;
-
-  actor_x[2]=160;
+  actor_dx[1]=10;
+  
+  actor_x[2]=100;
   actor_y[2]=180;
+
+  actor_x[3]=160;
+  actor_y[3]=180;
   
   for(i=0;i<NUM_ACTORS;i++)
   {
@@ -93,68 +97,55 @@ void display_cups()
 void shuffle()
 {
   char oam_id;
-  int i;
   int j;
-  setup_graphics();
- 
-  actor_x[0]=40;
-  actor_y[0]=180;
-  actor_dx[0]=2;
   
-  actor_x[1]=100;
-  actor_y[1]=180;
-
-  actor_x[2]=160;
-  actor_y[2]=180;
-
-  for(i=0;i<NUM_ACTORS;i++)
-  {
-   oam_id = oam_meta_spr(actor_x[i], actor_y[i], oam_id, metasprite);
-  }
-
   //shuffle right
-    for(j=0;j<1000;j++)
+    for(j=0;j<40;j++)
     {
       oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite);
-      actor_x[0] += actor_dx[0];
+      oam_id = oam_meta_spr(actor_x[1], actor_y[1], oam_id, metasprite);
+      actor_x[1] += 10;
+      oam_id = oam_meta_spr(actor_x[2], actor_y[2], oam_id, metasprite);
+     // actor_x[2] += 10;
+      oam_id = oam_meta_spr(actor_x[3], actor_y[3], oam_id, metasprite);
+      actor_x[3] -= 10;
+      ppu_wait_frame();
+      oam_clear();
     }
     //shuffle left
-    for(j=0;j<1000;j++)
+    for(j=0;j<40;j++)
     {
       oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite);
-      actor_x[0] -= actor_dx[0];
+      oam_id = oam_meta_spr(actor_x[1], actor_y[1], oam_id, metasprite);
+      actor_x[1] += 10;
+      oam_id = oam_meta_spr(actor_x[2], actor_y[2], oam_id, metasprite);
+     // actor_x[2] -= 10;
+      oam_id = oam_meta_spr(actor_x[3], actor_y[3], oam_id, metasprite);
+      actor_x[3] -= 10;
+      ppu_wait_frame();
+      oam_clear();
     }
     //shuffle right again
-    for(j=0;j<1000;j++)
+    for(j=0;j<800;j++)
     {
       oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite);
-      actor_x[0] += actor_dx[0];
+      oam_id = oam_meta_spr(actor_x[1], actor_y[1], oam_id, metasprite);
+      actor_x[1] += actor_dx[1];
     }
     //shuffle left again
-    for(j=0;j<1000;j++)
+    for(j=0;j<800;j++)
     {
       oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite);
-      actor_x[0] -= actor_dx[0];
+      oam_id = oam_meta_spr(actor_x[1], actor_y[1], oam_id, metasprite);
+      actor_x[1] -= actor_dx[1];
     }
-    
-    oam_clear();
   
-    actor_x[0]=40;
-    actor_y[0]=180;
-    actor_x[1]=100;
-    actor_y[1]=180;
-    actor_x[2]=160;
-    actor_y[2]=180;
-  
-    for(i=0;i<NUM_ACTORS;i++)
-    {
-     oam_id = oam_meta_spr(actor_x[i], actor_y[i], oam_id, metasprite);
-    } 
 }
 void guess()
 {
   int num = (rand() % 3) +1;
   int score;
+  int i;
   int cup=1;  //used to compare selected cup to winning cup
   char oam_id;
  
@@ -162,31 +153,34 @@ void guess()
   char str[] ="";
   sprintf(str, "%d", num); 
   
-  actor_x[3]=20;
-  actor_y[3]=80;
-
-  oam_id = oam_meta_spr(actor_x[3], actor_y[3], oam_id, metasprite);
-  
   display_cups();
   
   while(1)
   {
    
-    if(pad_trigger(0)&PAD_DOWN && (actor_y[3] >=80 && actor_y[3] < 100))
+    if(pad_trigger(0)&PAD_DOWN && (actor_y[0] >=80 && actor_y[0] < 100))
     {
-      oam_hide_rest(0);
+      oam_clear();
       cup++;
-      actor_x[3]=20;
-      actor_y[3]+=10;
-      oam_id = oam_meta_spr(actor_x[3], actor_y[3], oam_id, metasprite);
+      actor_x[0]=20;
+      actor_y[0]+=10;
       
-    }
-    if(pad_trigger(0)&PAD_UP && (actor_y[3] >80 && actor_y[3] <= 100))
+      for(i=0;i<NUM_ACTORS;i++)
+      {
+        oam_id = oam_meta_spr(actor_x[i], actor_y[i], oam_id, metasprite);
+      }
+    }  
+    
+    if(pad_trigger(0)&PAD_UP && (actor_y[0] >80 && actor_y[0] <= 100))
     {
-      oam_hide_rest(0);
-      actor_x[3]=20;
-      actor_y[3]-=10;
-      oam_id = oam_meta_spr(actor_x[3], actor_y[3], oam_id, metasprite);
+      oam_clear();
+      actor_x[0]=20;
+      actor_y[0]-=10;
+        
+      for(i=0;i<NUM_ACTORS;i++)
+      {
+       oam_id = oam_meta_spr(actor_x[i], actor_y[i], oam_id, metasprite);
+      } 
     }
     
     if(pad_trigger(0)&PAD_START)
@@ -210,7 +204,6 @@ void guess()
         vram_write(scr,2);
         vram_adr(NTADR_A(6,20)); 	
         vram_write("SCORE:", 6);
-        
         
         ppu_on_all();
         break;
