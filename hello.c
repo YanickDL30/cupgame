@@ -10,10 +10,8 @@
 #define ATTR 0
 #define NUM_ACTORS 4
 
-
 // link the pattern table into CHR ROM
 //#link "chr_generic.s"
-
 // main function, run after console reset
 
   const unsigned char metasprite[]={
@@ -92,24 +90,18 @@ void display_cups()
  
   actor_x[0]=20;
   actor_y[0]=80;
-  
   actor_x[1]=40;
-  actor_y[1]=180;
-  actor_dx[1]=10;
-  
+  actor_y[1]=180; 
   actor_x[2]=100;
   actor_y[2]=180;
-
   actor_x[3]=160;
   actor_y[3]=180;
-  
   
   oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite4);
   for(i=1;i<NUM_ACTORS;i++)
   {
    oam_id = oam_meta_spr(actor_x[i], actor_y[i], oam_id, metasprite);
   }
-  
 }
 
 void shuffle()
@@ -159,6 +151,7 @@ void display_ball(int x)
     ppu_wait_frame();
   }
 }
+
 void guess()
 {
   int num = (rand() % 3) +1; //winning cup number
