@@ -129,7 +129,7 @@ void shuffle()
       oam_id = oam_meta_spr(actor_x[3], actor_y[3], oam_id, metasprite);
       actor_x[3] += 4;
       ppu_wait_frame();
-      //oam_clear();
+      oam_clear();
     }
     
   } 
