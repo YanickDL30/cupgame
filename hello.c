@@ -13,6 +13,7 @@
 // link the pattern table into CHR ROM
 //#link "chr_generic.s"
 // main function, run after console reset
+  int seed;
 
   const unsigned char metasprite[]={    //cups
         0,      0,      TILE+0,   ATTR, 
@@ -75,6 +76,7 @@ void title_screen()
 
  while(1)
   {
+   seed=rand() % 100;
     if(pad_trigger(0)&PAD_START) break;    
   }
 }
@@ -151,13 +153,13 @@ void display_ball(int x)
     oam_id = oam_meta_spr(actor_x[i], actor_y[i], oam_id, metasprite); //shows empty cups
   }
   
-  for(i=0;i<75;i++)
+  for(i=0;i<74;i++)
   {
     ppu_wait_frame();
   }
 }
 
-void guess(int seed)
+void guess()
 {
   int num = ((seed+rand()) % 3) +1; //winning cup number
   //int num= (rand() % 3)+1;
@@ -255,10 +257,7 @@ void guess(int seed)
 
 void game()
 {
-  int seed;
   char str[] =""; //score to char string 
-  
-  seed = (rand() % 100);
   ppu_off();
   
   vram_adr(NTADR_A(8,2));		// set address
@@ -284,21 +283,17 @@ void game()
 
   ppu_on_all();
   
-  guess(seed);
+  guess();
   
 }
 
-void main(void) {
-  
+void main(void) 
+{
   pal_all(PALETTE);
-  
   title_screen();
-  
-
   while (1) 
   {   
-     game(); 
-           
+     game();      
   }   
 }
 
