@@ -3,7 +3,10 @@
 #include <stdlib.h>
 #include <nes.h>
 #include <string.h>
-#define TILE 0xc4
+#define TILE 0xc4 //cup
+
+#define TILE2 0xc8 //ball
+#define TILE3 0xd8 //boy
 #define ATTR 0
 #define NUM_ACTORS 4
 
@@ -19,7 +22,19 @@
         8,      0,      TILE+2,   ATTR, 
         8,      8,      TILE+3,   ATTR, 
         128};
-
+  
+  const unsigned char metasprite3[]={
+        0,      0,      TILE2+0,   ATTR, 
+        0,      8,      TILE2+1,   ATTR, 
+        8,      0,      TILE2+2,   ATTR, 
+        8,      8,      TILE2+3,   ATTR, 
+        128};
+  const unsigned char metasprite4[]={
+        0,      0,      TILE3+0,   ATTR, 
+        0,      8,      TILE3+1,   ATTR, 
+        8,      0,      TILE3+2,   ATTR, 
+        8,      8,      TILE3+3,   ATTR, 
+        128};
   const char PALETTE[32] = { 
   0x05,			// screen color
 
@@ -88,57 +103,69 @@ void display_cups()
   actor_x[3]=160;
   actor_y[3]=180;
   
-  for(i=0;i<NUM_ACTORS;i++)
+  
+  oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite4);
+  for(i=1;i<NUM_ACTORS;i++)
   {
    oam_id = oam_meta_spr(actor_x[i], actor_y[i], oam_id, metasprite);
   }
+  
 }
 
 void shuffle()
 {
   char oam_id;
   int j;
+  int i;
   
-  //shuffle right
-    for(j=0;j<60;j++)
+  for(i=0;i<3;i++)
+  {
+  for(j=0;j<12;j++)
     {
-      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite);
+      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite4);
       oam_id = oam_meta_spr(actor_x[1], actor_y[1], oam_id, metasprite);
-      actor_x[1] += 10;
+      actor_x[1] += 5;
       oam_id = oam_meta_spr(actor_x[2], actor_y[2], oam_id, metasprite);
-     // actor_x[2] += 10;
       oam_id = oam_meta_spr(actor_x[3], actor_y[3], oam_id, metasprite);
-      actor_x[3] -= 10;
+      actor_x[3] -= 5;
       ppu_wait_frame();
       oam_clear();
     }
-
-    //shuffle right again
-    for(j=0;j<600;j++)
+      for(j=0;j<20;j++)
     {
-      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite);
+      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite4);
       oam_id = oam_meta_spr(actor_x[1], actor_y[1], oam_id, metasprite);
-      actor_x[1] += actor_dx[1];
+      actor_x[1] -= 3;
+      oam_id = oam_meta_spr(actor_x[2], actor_y[2], oam_id, metasprite);
+      oam_id = oam_meta_spr(actor_x[3], actor_y[3], oam_id, metasprite);
+      actor_x[3] += 3;
+      ppu_wait_frame();
+      oam_clear();
+    }
+  } 
+}
 
-      
-    }
-    for(j=0;j<600;j++)
-    {
-      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite);
-      oam_id = oam_meta_spr(actor_x[1], actor_y[1], oam_id, metasprite);
-      actor_x[1] -= actor_dx[1];
-      
-    }
+void display_ball(int x)
+{
+  int i;
+  char oam_id;
+  setup_graphics();
+ 
+  oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite4);
+  oam_id = oam_meta_spr(actor_x[x], actor_y[x], oam_id, metasprite3);
   
+  for(i=0;i<50;i++)
+  {
+    ppu_wait_frame();
+  }
 }
 void guess()
 {
-  int num = (rand() % 3) +1;
+  int num = (rand() % 3) +1; //winning cup number
   int score;
   int i;
-  int cup=1;  //used to compare selected cup to winning cup
+  int cup=1;  //user selected cup number
   char oam_id;
- 
   char scr[]="";
   char str[] ="";
   sprintf(str, "%d", num); 
@@ -147,7 +174,6 @@ void guess()
   
   while(1)
   {
-   
     if(pad_trigger(0)&PAD_DOWN && (actor_y[0] >=80 && actor_y[0] < 100))
     {
       oam_clear();
@@ -155,7 +181,8 @@ void guess()
       actor_x[0]=20;
       actor_y[0]+=10;
       
-      for(i=0;i<NUM_ACTORS;i++)
+      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite4);
+      for(i=1;i<NUM_ACTORS;i++)
       {
         oam_id = oam_meta_spr(actor_x[i], actor_y[i], oam_id, metasprite);
       }
@@ -167,7 +194,8 @@ void guess()
       actor_x[0]=20;
       actor_y[0]-=10;
         
-      for(i=0;i<NUM_ACTORS;i++)
+      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite4);
+      for(i=1;i<NUM_ACTORS;i++)
       {
        oam_id = oam_meta_spr(actor_x[i], actor_y[i], oam_id, metasprite);
       } 
@@ -183,7 +211,7 @@ void guess()
         score=score+1;
         vram_adr(NTADR_A(6,18)); 	
         vram_write("WIN!", 4);
-              
+       
         vram_adr(NTADR_A(19,19)); 
         vram_write(str,1);
         vram_adr(NTADR_A(6,19)); 	
@@ -195,7 +223,8 @@ void guess()
         vram_adr(NTADR_A(6,20)); 	
         vram_write("SCORE:", 6);
         
-        ppu_on_all();
+        ppu_on_all();  
+        display_ball(num);
         break;
       }
     else
@@ -204,22 +233,23 @@ void guess()
       vram_adr(NTADR_A(6,18)); 	
       vram_write("LOSE", 4);
 
-        vram_adr(NTADR_A(19,19)); 
-        vram_write(str,1);
-        vram_adr(NTADR_A(6,19)); 	
-        vram_write("Winning cup:", 12);
+      vram_adr(NTADR_A(19,19)); 
+      vram_write(str,1);
+      vram_adr(NTADR_A(6,19)); 	
+      vram_write("Winning cup:", 12);
          
-        sprintf(scr,"%d",score);
-        vram_adr(NTADR_A(13,20)); 
-        vram_write(scr,2);
-        vram_adr(NTADR_A(6,20)); 	
-        vram_write("SCORE:", 6);
+      sprintf(scr,"%d",score);
+      vram_adr(NTADR_A(13,20)); 
+      vram_write(scr,2);
+      vram_adr(NTADR_A(6,20)); 	
+      vram_write("SCORE:", 6);
       ppu_on_all();
+      display_ball(num);
 
       break;
      }
     }    
-  }  
+  }
 }
 
 void game()
