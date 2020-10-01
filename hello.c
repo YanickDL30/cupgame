@@ -5,7 +5,7 @@
 #include <string.h>
 #define TILE 0xc4 //cup
 #define TILE2 0xc8 //ball
-#define TILE3 0xd8 //boy
+#define TILE3 0x1f//arrow
 #define ATTR 0
 #define NUM_ACTORS 4
 
@@ -27,10 +27,7 @@
         8,      8,      TILE2+3,   ATTR, 
         128};
   const unsigned char metasprite3[]={
-        0,      0,      TILE3+0,   ATTR, 
-        0,      8,      TILE3+1,   ATTR, 
-        8,      0,      TILE3+2,   ATTR, 
-        8,      8,      TILE3+3,   ATTR, 
+        0,      0,      TILE3,   ATTR, 
         128};
   const char PALETTE[32] = { 
   0x05,			// screen color
@@ -164,12 +161,11 @@ void guess(int seed)
   
   while(1)
   {
-    if(pad_trigger(0)&PAD_DOWN && (actor_y[0] >=80 && actor_y[0] < 100))
+    if(pad_trigger(0)&PAD_DOWN && (actor_y[0] >=80 && actor_y[0] < 110))
     {
       oam_clear();
       cup++;
-      actor_x[0]=20;
-      actor_y[0]+=10;
+      actor_y[0]+=15;
       
       oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite3);
       for(i=1;i<NUM_ACTORS;i++)
@@ -178,11 +174,10 @@ void guess(int seed)
       }
     }  
     
-    if(pad_trigger(0)&PAD_UP && (actor_y[0] >80 && actor_y[0] <= 100))
+    if(pad_trigger(0)&PAD_UP && (actor_y[0] >80 && actor_y[0] <= 110))
     {
       oam_clear();
-      actor_x[0]=20;
-      actor_y[0]-=10;
+      actor_y[0]-=15;
         
       oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite3);
       for(i=1;i<NUM_ACTORS;i++)
