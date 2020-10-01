@@ -4,7 +4,6 @@
 #include <nes.h>
 #include <string.h>
 #define TILE 0xc4 //cup
-
 #define TILE2 0xc8 //ball
 #define TILE3 0xd8 //boy
 #define ATTR 0
@@ -21,13 +20,13 @@
         8,      8,      TILE+3,   ATTR, 
         128};
   
-  const unsigned char metasprite3[]={
+  const unsigned char metasprite2[]={
         0,      0,      TILE2+0,   ATTR, 
         0,      8,      TILE2+1,   ATTR, 
         8,      0,      TILE2+2,   ATTR, 
         8,      8,      TILE2+3,   ATTR, 
         128};
-  const unsigned char metasprite4[]={
+  const unsigned char metasprite3[]={
         0,      0,      TILE3+0,   ATTR, 
         0,      8,      TILE3+1,   ATTR, 
         8,      0,      TILE3+2,   ATTR, 
@@ -65,8 +64,6 @@ void setup_graphics()
 
 void title_screen() 
 {
-  int seed;
-
   vram_adr(NTADR_A(12,2));	
   vram_write("Welcome", 7);
   
@@ -77,7 +74,6 @@ void title_screen()
 
  while(1)
   {
-    seed = (rand() % 100);
     if(pad_trigger(0)&PAD_START) break;    
   }
 }
@@ -97,7 +93,7 @@ void display_cups()
   actor_x[3]=160;
   actor_y[3]=180;
   
-  oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite4);
+  oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite3);
   for(i=1;i<NUM_ACTORS;i++)
   {
    oam_id = oam_meta_spr(actor_x[i], actor_y[i], oam_id, metasprite);
@@ -114,7 +110,7 @@ void shuffle()
   {
   for(j=0;j<12;j++)
     {
-      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite4);
+      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite3);
       oam_id = oam_meta_spr(actor_x[1], actor_y[1], oam_id, metasprite);
       actor_x[1] += 5;
       oam_id = oam_meta_spr(actor_x[2], actor_y[2], oam_id, metasprite);
@@ -123,17 +119,18 @@ void shuffle()
       ppu_wait_frame();
       oam_clear();
     }
-      for(j=0;j<20;j++)
+      for(j=0;j<15;j++)
     {
-      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite4);
+      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite3);
       oam_id = oam_meta_spr(actor_x[1], actor_y[1], oam_id, metasprite);
-      actor_x[1] -= 3;
+      actor_x[1] -= 4;
       oam_id = oam_meta_spr(actor_x[2], actor_y[2], oam_id, metasprite);
       oam_id = oam_meta_spr(actor_x[3], actor_y[3], oam_id, metasprite);
-      actor_x[3] += 3;
+      actor_x[3] += 4;
       ppu_wait_frame();
       oam_clear();
     }
+    
   } 
 }
 
@@ -143,18 +140,18 @@ void display_ball(int x)
   char oam_id;
   setup_graphics();
  
-  oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite4);
-  oam_id = oam_meta_spr(actor_x[x], actor_y[x], oam_id, metasprite3);
+  oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite3);
+  oam_id = oam_meta_spr(actor_x[x], actor_y[x], oam_id, metasprite2);
   
-  for(i=0;i<50;i++)
+  for(i=0;i<75;i++)
   {
     ppu_wait_frame();
   }
 }
 
-void guess()
+void guess(int seed)
 {
-  int num = (rand() % 3) +1; //winning cup number
+  int num = ((seed+rand()) % 3) +1; //winning cup number
   int score;
   int i;
   int cup=1;  //user selected cup number
@@ -174,7 +171,7 @@ void guess()
       actor_x[0]=20;
       actor_y[0]+=10;
       
-      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite4);
+      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite3);
       for(i=1;i<NUM_ACTORS;i++)
       {
         oam_id = oam_meta_spr(actor_x[i], actor_y[i], oam_id, metasprite);
@@ -187,7 +184,7 @@ void guess()
       actor_x[0]=20;
       actor_y[0]-=10;
         
-      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite4);
+      oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite3);
       for(i=1;i<NUM_ACTORS;i++)
       {
        oam_id = oam_meta_spr(actor_x[i], actor_y[i], oam_id, metasprite);
@@ -245,7 +242,7 @@ void guess()
   }
 }
 
-void game()
+void game(int seed)
 {
 
   char str[] =""; //score to char string 
@@ -274,11 +271,12 @@ void game()
 
   ppu_on_all();
   
-  guess();
+  guess(seed);
   
 }
 
 void main(void) {
+  int seed;
 
   // set palette colors
   pal_col(0,0x05);	// set screen to red
@@ -287,10 +285,12 @@ void main(void) {
   pal_col(3,0x29);	// white
   
   title_screen();
+  
 
   while (1) 
   {   
-     game(); 
+     seed = (rand() % 100);
+     game(seed); 
            
   }   
 }
