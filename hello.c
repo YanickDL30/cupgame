@@ -14,24 +14,24 @@
 //#link "chr_generic.s"
 // main function, run after console reset
 
-  const unsigned char metasprite[]={
+  const unsigned char metasprite[]={    //cups
         0,      0,      TILE+0,   ATTR, 
         0,      8,      TILE+1,   ATTR, 
         8,      0,      TILE+2,   ATTR, 
         8,      8,      TILE+3,   ATTR, 
         128};
   
-  const unsigned char metasprite2[]={
+  const unsigned char metasprite2[]={   //ball
         0,      0,      TILE2+0,   ATTR, 
         0,      8,      TILE2+1,   ATTR, 
         8,      0,      TILE2+2,   ATTR, 
         8,      8,      TILE2+3,   ATTR, 
         128};
-  const unsigned char metasprite3[]={
+  const unsigned char metasprite3[]={   //arrow
         0,      0,      TILE3,   ATTR,
-        //0,      0,      TILE4,   ATTR,
-       // 0,      0,      TILE4,   ATTR,
-       // 0,      0,      TILE4,   ATTR,
+        0,      0,      TILE4,   ATTR,
+        0,      0,      TILE4,   ATTR,
+        0,      0,      TILE4,   ATTR,
         128};
   const char PALETTE[32] = { 
   0x06,			// screen color
@@ -65,7 +65,6 @@ void setup_graphics()
 
 void title_screen() 
 {
-  int seed;
   vram_adr(NTADR_A(12,2));	
   vram_write("Welcome", 7);
   
@@ -76,7 +75,6 @@ void title_screen()
 
  while(1)
   {
-    seed = (rand() % 100);
     if(pad_trigger(0)&PAD_START) break;    
   }
 }
@@ -142,15 +140,15 @@ void display_ball(int x)
   char oam_id;
   setup_graphics();
  
-  oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite3);
-  for(i=1;i<4;i++)
+  oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite3); //shows arrow
+  oam_id = oam_meta_spr(actor_x[x], actor_y[x], oam_id, metasprite2); //shows ball
+  for(i=1;i<NUM_ACTORS;i++)
   {
     if(i==x)
     {
       continue;   
     }
-    oam_id = oam_meta_spr(actor_x[i], actor_y[i], oam_id, metasprite);
-    oam_id = oam_meta_spr(actor_x[x], actor_y[x], oam_id, metasprite2);
+    oam_id = oam_meta_spr(actor_x[i], actor_y[i], oam_id, metasprite); //shows empty cups
   }
   
   for(i=0;i<75;i++)
@@ -159,10 +157,10 @@ void display_ball(int x)
   }
 }
 
-void guess()
+void guess(int seed)
 {
-  //int num = ((seed+rand()) % 3) +1; //winning cup number
-  int num= (rand() % 3)+1;
+  int num = ((seed+rand()) % 3) +1; //winning cup number
+  //int num= (rand() % 3)+1;
   int score;
   int i;
   int cup=1;  //user selected cup number
@@ -257,8 +255,10 @@ void guess()
 
 void game()
 {
-
+  int seed;
   char str[] =""; //score to char string 
+  
+  seed = (rand() % 100);
   ppu_off();
   
   vram_adr(NTADR_A(8,2));		// set address
@@ -284,7 +284,7 @@ void game()
 
   ppu_on_all();
   
-  guess();
+  guess(seed);
   
 }
 
