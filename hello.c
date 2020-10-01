@@ -131,13 +131,15 @@ void shuffle()
       oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite);
       oam_id = oam_meta_spr(actor_x[1], actor_y[1], oam_id, metasprite);
       actor_x[1] += actor_dx[1];
+
     }
     //shuffle left again
     for(j=0;j<800;j++)
     {
       oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite);
       oam_id = oam_meta_spr(actor_x[1], actor_y[1], oam_id, metasprite);
-      actor_x[1] -= actor_dx[1];
+      actor_x[1] += actor_dx[1];
+
     }
   
 }
