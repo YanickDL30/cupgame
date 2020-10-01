@@ -34,9 +34,9 @@
        // 0,      0,      TILE4,   ATTR,
         128};
   const char PALETTE[32] = { 
-  0x05,			// screen color
+  0x06,			// screen color
 
-  0x11,0x30,0x27,0x0,	// background palette 0
+  0x11,0x30,0x28,0x0,	// background palette 0
   0x1c,0x20,0x2c,0x0,	// background palette 1
   0x00,0x10,0x20,0x0,	// background palette 2
   0x06,0x16,0x26,0x0,	// background palette 3
@@ -65,6 +65,7 @@ void setup_graphics()
 
 void title_screen() 
 {
+  int seed;
   vram_adr(NTADR_A(12,2));	
   vram_write("Welcome", 7);
   
@@ -75,6 +76,7 @@ void title_screen()
 
  while(1)
   {
+    seed = (rand() % 100);
     if(pad_trigger(0)&PAD_START) break;    
   }
 }
@@ -158,9 +160,10 @@ void display_ball(int x)
   }
 }
 
-void guess(int seed)
+void guess()
 {
-  int num = ((seed+rand()) % 3) +1; //winning cup number
+  //int num = ((seed+rand()) % 3) +1; //winning cup number
+  int num= (rand() % 3)+1;
   int score;
   int i;
   int cup=1;  //user selected cup number
@@ -168,7 +171,6 @@ void guess(int seed)
   char scr[]="";
   char str[] ="";
   sprintf(str, "%d", num); 
-  
   display_cups();
   
   while(1)
@@ -227,6 +229,7 @@ void guess(int seed)
     else
     {
       ppu_off();
+      
       vram_adr(NTADR_A(6,18)); 	
       vram_write("LOSE", 4);
 
@@ -240,16 +243,16 @@ void guess(int seed)
       vram_write(scr,2);
       vram_adr(NTADR_A(6,20)); 	
       vram_write("SCORE:", 6);
+      
       ppu_on_all();
       display_ball(num);
-
       break;
      }
     }    
   }
 }
 
-void game(int seed)
+void game()
 {
 
   char str[] =""; //score to char string 
@@ -278,26 +281,20 @@ void game(int seed)
 
   ppu_on_all();
   
-  guess(seed);
+  guess();
   
 }
 
 void main(void) {
-  int seed;
-
-  // set palette colors
-  pal_col(0,0x05);	// set screen to red
-  pal_col(1,0x01);	// fuchsia
-  //pal_col(2,0x20);	// grey
-  pal_col(3,0x29);	// white
+  
+  pal_all(PALETTE);
   
   title_screen();
   
 
   while (1) 
   {   
-     seed = (rand() % 100);
-     game(seed); 
+     game(); 
            
   }   
 }
