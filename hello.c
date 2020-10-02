@@ -8,7 +8,7 @@
 #define TILE3 0x1f//arrow
 #define TILE4 0x00//empty
 #define ATTR 0
-#define ATTR1 2
+#define ATTR1 3
 #define NUM_ACTORS 4
 
 #include "apu.h"
