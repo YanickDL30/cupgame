@@ -8,7 +8,14 @@
 #define TILE3 0x1f//arrow
 #define TILE4 0x00//empty
 #define ATTR 0
+#define ATTR1 2
 #define NUM_ACTORS 4
+
+#include "apu.h"
+//#link "apu.c"
+
+#include "vrambuf.h"
+//#link "vrambuf.c"
 
 // link the pattern table into CHR ROM
 //#link "chr_generic.s"
@@ -16,10 +23,10 @@
   int seed;
 
   const unsigned char metasprite[]={    //cups
-        0,      0,      TILE+0,   ATTR, 
-        0,      8,      TILE+1,   ATTR, 
-        8,      0,      TILE+2,   ATTR, 
-        8,      8,      TILE+3,   ATTR, 
+        0,      0,      TILE+0,   ATTR1, 
+        0,      8,      TILE+1,   ATTR1, 
+        8,      0,      TILE+2,   ATTR1, 
+        8,      8,      TILE+3,   ATTR1, 
         128};
   
   const unsigned char metasprite2[]={   //ball
@@ -51,8 +58,30 @@
   byte actor_x[NUM_ACTORS];
   byte actor_y[NUM_ACTORS];
   // actor x/y deltas per frame (signed)
-  sbyte actor_dx[NUM_ACTORS];
-  sbyte actor_dy[NUM_ACTORS];
+
+
+void start_ding() {
+  APU_ENABLE(ENABLE_PULSE1);
+  APU_PULSE_DECAY(1, 190, 64, 10, 18);
+  APU_PULSE_SWEEP(1, 2, 3, 0);
+  
+}
+
+void win_chime() {
+  APU_ENABLE(ENABLE_PULSE0);
+  APU_PULSE_DECAY(0, 782, 0, 13, 8);
+  APU_PULSE_SWEEP(0, 1, 4, 1);
+  APU_PULSE_DECAY(1, 993, 64, 6, 136);
+  APU_PULSE_SWEEP(1, 7, 1, 0);
+}
+
+
+void lose_static() {
+
+ APU_ENABLE(ENABLE_NOISE);
+  APU_NOISE_DECAY(8|7, 13, 10);
+}
+
 
 void setup_graphics() 
 {
@@ -73,11 +102,16 @@ void title_screen()
   vram_write("Press start to begin", 20);
   
   ppu_on_all();
-
+   
  while(1)
   {
    seed=rand() % 100;
-    if(pad_trigger(0)&PAD_START) break;    
+  
+    if(pad_trigger(0)&PAD_START)
+    {
+      start_ding(); 
+      break;
+    }
   }
 }
 
@@ -108,6 +142,14 @@ void shuffle()
   char oam_id;
   int j;
   int i;
+  setup_graphics();
+  oam_id = oam_meta_spr(actor_x[0], actor_y[0], oam_id, metasprite3);
+  oam_id = oam_meta_spr(actor_x[2], actor_y[2], oam_id, metasprite2);
+
+  for(i=0;i<74;i++)
+  {
+    ppu_wait_frame();
+  }
   
   for(i=0;i<4;i++)
   {
@@ -120,7 +162,7 @@ void shuffle()
       oam_id = oam_meta_spr(actor_x[3], actor_y[3], oam_id, metasprite);
       actor_x[3] -= 5;
       ppu_wait_frame();
-      oam_clear();
+      //oam_clear();
     }
       for(j=0;j<15;j++)
     {
@@ -131,9 +173,9 @@ void shuffle()
       oam_id = oam_meta_spr(actor_x[3], actor_y[3], oam_id, metasprite);
       actor_x[3] += 4;
       ppu_wait_frame();
-      oam_clear();
+      //oam_clear();
     }
-  } 
+  }
 }
 
 void display_ball(int x)
@@ -162,7 +204,6 @@ void display_ball(int x)
 void guess()
 {
   int num = ((seed+rand()) % 3) +1; //winning cup number
-  //int num= (rand() % 3)+1;
   int score;
   int i;
   int cup=1;  //user selected cup number
@@ -170,6 +211,9 @@ void guess()
   char scr[]="";
   char str[] ="";
   sprintf(str, "%d", num); 
+  
+  display_cups();
+  shuffle();
   display_cups();
   
   while(1)
@@ -205,19 +249,20 @@ void guess()
     
     if(pad_trigger(0)&PAD_START)
     {
-      shuffle();
+      //shuffle();
       if(cup==num)
       {
         ppu_off();
-        
+        win_chime();//sound
         score=score+1;
+        
         vram_adr(NTADR_A(6,18)); 	
         vram_write("WIN!", 4);
        
-        vram_adr(NTADR_A(19,19)); 
-        vram_write(str,1);
-        vram_adr(NTADR_A(6,19)); 	
-        vram_write("Winning cup:", 12);
+        //vram_adr(NTADR_A(19,19)); 
+        //vram_write(str,1);
+        //vram_adr(NTADR_A(6,19)); 	
+        //vram_write("Winning cup:", 12);
   
         sprintf(scr,"%d",score);
         vram_adr(NTADR_A(13,20)); 
@@ -232,14 +277,14 @@ void guess()
     else
     {
       ppu_off();
-      
+      lose_static(); //sound
       vram_adr(NTADR_A(6,18)); 	
       vram_write("LOSE", 4);
 
-      vram_adr(NTADR_A(19,19)); 
-      vram_write(str,1);
-      vram_adr(NTADR_A(6,19)); 	
-      vram_write("Winning cup:", 12);
+      //vram_adr(NTADR_A(19,19)); 
+      //vram_write(str,1);
+      //vram_adr(NTADR_A(6,19)); 	
+      //vram_write("Winning cup:", 12);
          
       sprintf(scr,"%d",score);
       vram_adr(NTADR_A(13,20)); 
@@ -296,5 +341,7 @@ void main(void)
      game();      
   }   
 }
+
+
 
 
